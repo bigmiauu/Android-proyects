@@ -2,9 +2,9 @@
     <!-- Base application theme. -->
     <style name="Theme.VIsteonPN" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/teal_200</item>
+        <item name="colorPrimary">#FF8010</item>
+        <item name="colorPrimaryDark">#FF9900</item>
+        <item name="colorAccent">#FF9900</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>

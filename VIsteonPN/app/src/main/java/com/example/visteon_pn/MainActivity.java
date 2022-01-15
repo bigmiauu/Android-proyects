@@ -5,12 +5,25 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.opencsv.CSVReader;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileReader;
 
 //import androidx.core.app.ActivityCompat;
 
@@ -20,6 +33,11 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,10 +45,14 @@ public class MainActivity extends AppCompatActivity {
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
     private static final int REQUEST_CAMERA_PERMISSION = 201;
-    //This class provides methods to play DTMF tones
     private ToneGenerator toneGen1;
     private TextView barcodeText;
     private String barcodeData;
+    private TextView supplierText;
+    private TextView descriptionText;
+    private String numparte;
+
+
 
 
     @Override
@@ -40,9 +62,78 @@ public class MainActivity extends AppCompatActivity {
         toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC,     100);
         surfaceView = findViewById(R.id.surface_view);
         barcodeText = findViewById(R.id.barcode_text);
+        supplierText  = findViewById(R.id.supplier);
+        descriptionText  = findViewById(R.id.description);
+
 
         initialiseDetectorsAndSources();
+
+
+
     }
+
+
+    public void magiaAFL() {
+
+        supplierText.setText("Proveedor");
+        descriptionText.setText("Descripcion");
+
+
+            // Read the raw csv file
+            InputStream is = getResources().openRawResource(R.raw.data);
+
+            // Reads text from character-input stream, buffering characters for efficient reading
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, Charset.forName("UTF-8"))
+            );
+
+            // Initialization
+            String line = "";
+
+            // Initialization
+            try {
+                // Step over headers
+                reader.readLine();
+
+                // If buffer is not empty
+                while ((line = reader.readLine()) != null) {
+                    Log.d("MyActivity","Line: " + line);
+                    // use comma as separator columns of CSV
+                    String[] tokens = line.split(",");
+                    // Read the data
+
+                        numparte = tokens[0];
+                    if( barcodeData.equals(numparte) == true){
+                        supplierText.setText(tokens[1]);
+                        descriptionText.setText(tokens[2]);
+                        break;
+                    }
+
+                    if( barcodeData.equals("P" + numparte) == true){
+                        supplierText.setText(tokens[1]);
+                        descriptionText.setText(tokens[2]);
+                        break;
+                    }
+
+
+
+
+                }
+
+            } catch (IOException e) {
+                // Logs error with priority level
+                Log.wtf("MyActivity", "Error reading data file on line" + line, e);
+
+                // Prints throwable details
+                e.printStackTrace();
+            }
+
+
+
+    }
+
+
+
 
     private void initialiseDetectorsAndSources() {
 
@@ -99,7 +190,10 @@ public class MainActivity extends AppCompatActivity {
                 if (barcodes.size() != 0) {
 
 
-                    barcodeText.post(new Runnable() {
+                    barcodeText.post(new Runnable()
+
+
+                    {
 
                         @Override
                         public void run() {
@@ -108,11 +202,13 @@ public class MainActivity extends AppCompatActivity {
                                 barcodeText.removeCallbacks(null);
                                 barcodeData = barcodes.valueAt(0).email.address;
                                 barcodeText.setText(barcodeData);
+                                magiaAFL();
                                 toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
                             } else {
 
                                 barcodeData = barcodes.valueAt(0).displayValue;
                                 barcodeText.setText(barcodeData);
+                                magiaAFL();
                                 toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
 
                             }
@@ -123,6 +219,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+
 
 }
 
