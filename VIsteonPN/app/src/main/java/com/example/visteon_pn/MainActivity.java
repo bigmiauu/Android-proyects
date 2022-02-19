@@ -1,6 +1,7 @@
 package com.example.visteon_pn;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -13,6 +14,7 @@ import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView supplierText;
     private TextView descriptionText;
     private String numparte;
-
+    Button switchToSecondActivity;
 
 
 
@@ -68,8 +70,21 @@ public class MainActivity extends AppCompatActivity {
 
         initialiseDetectorsAndSources();
 
+        switchToSecondActivity = findViewById(R.id.button2);
+        switchToSecondActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchActivities();
+            }
+        });
 
 
+
+    }
+
+    private void switchActivities() {
+        Intent switchActivityIntent = new Intent(this, MainActivity2.class);
+        startActivity(switchActivityIntent);
     }
 
 
